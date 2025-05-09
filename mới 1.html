@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+<title>TO-DO LIST</title>
+<style>
+  /* Reset and base styles */
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f5f7fa;
+    color: #333;
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+    min-height: 100vh;
+  }
+  .container {
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    max-width: 480px;
+    width: 100%;
+    padding: 20px 24px 32px;
+    display: flex;
+    flex-direction: column;
+  }
+  h1 {
+    margin: 0 0 20px;
+    font-weight: 700;
+    font-size: 1.8rem;
+    color: #2c3e50;
+    text-align: center;
+  }
+  form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+  input[type="text"], input[type="date"] {
+    flex: 1 1 auto;
+    padding: 10px 14px;
+    border: 2px solid #d1d8e0;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+  }
+  input[type="text"]:focus, input[type="date"]:focus {
+    outline: none;
+    border-color: #3498db;
+  }
+  button.add-btn {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 11px 18px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  button.add-btn:hover {
+    background-color: #2980b9;
+  }
+  ul.todo-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  ul.todo-list li {
+    background: #ffd6e8; /* pink for not done */
+    border-radius: 6px;
+    padding: 14px 16px;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  ul.todo-list li:last-child {
+    margin-bottom: 0;
+  }
+  ul.todo-list li.done {
+    background: #d6efdf;
+    color: #2ecc71;
+    text-decoration: line-through;
+  }
+  ul.todo-list li .check-box {
+    flex-shrink: 0;
+  }
+  ul.todo-list li label.content-label {
+    flex: 1 1 60%;
+    font-size: 1.1rem;
+    cursor: pointer;
+  }
+  ul.todo-list li label.content-label[contenteditable="true"] {
+    border-bottom: 1px dashed transparent;
+  }
+  ul.todo-list li label.content-label[contenteditable="true"]:focus {
+    outline: none;
+    border-color: #3498db;
+    background: #fff;
+  }
+  ul.todo-list li span.due-date {
+    flex-shrink: 0;
+    font-size: 0.9rem;
+    color: #7f8c8d;
+    min-width: 110px;
+    font-weight: 600;
+  }
+  ul.todo-list li.done span.due-date {
+    color: #27ae60;
+  }
+  ul.todo-list li button.edit-btn,
+  ul.todo-list li button.delete-btn {
+    background: none;
+    border: none;
+    color: #7f8c8d;
+    cursor: pointer;
+    padding: 6px 8px;
+    border-radius: 6px;
+    transition: background-color 0.2s, color 0.2s;
+  }
+  ul.todo-list li button.edit-btn:hover {
+    background-color: #3498db;
+    color: white;
+  }
+  ul.todo-list li button.delete-btn:hover {
+    background-color: #e74c3c;
+    color: white;
+  }
+  ul.todo-list li button.editing {
+    background-color: #f39c12;
+    color: white;
+  }
+
+  /* Mobile responsiveness */
+  @media (max-width: 400px) {
+    ul.todo-list li {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    ul.todo-list li span.due-date,
+    ul.todo-list li button.edit-btn,
+    ul.todo-list li button.delete-btn {
+      margin-top: 8px;
+    }
+  }
+</style>
+</head>
+<body>
+  <main class="container" role="main" aria-label="TO-DO LIST">
+    <h1>TO-DO LIST</h1>
+    <form id="todo-form" aria-label="Thêm công việc mới">
+      <input type="text" id="todo-input" placeholder="Nhập công việc cần làm..." aria-label="Công việc cần làm" required maxlength="100" />
+      <input type="date" id="todo-date" aria-label="Ngày cần làm việc" required />
+      <button type="submit" class="add-btn" aria-label="Thêm công việc">Thêm</button>
+    </form>
+    <ul id="todo-list" class="todo-list" aria-live="polite" aria-relevant="additions removals"></ul>
+  </main>
+
+<script>
+  (function() {
+    const form = document.getElementById('todo-form');
+    const todoInput = document.getElementById('todo-input');
+    const todoDate = document.getElementById('todo-date');
+    const todoList = document.getElementById('todo-list');
+
+    // Format date as dd/mm/yyyy for display
+    function formatDate(dateStr) {
+      const d = new Date(dateStr);
+      if (isNaN(d)) return '';
+      const day = ('0' + d.getDate()).slice(-2);
+      const month = ('0' + (d.getMonth() + 1)).slice(-2);
+      const year = d.getFullYear();
+      return `${day}/${month}/${year}`;
+    }
+
+    // Save todos to localStorage
+    function saveTodos(todos) {
+      localStorage.setItem('todoList', JSON.stringify(todos));
+    }
+
+    // Load todos from localStorage
+    function loadTodos() {
+      const data = localStorage.getItem('todoList');
+      return data ? JSON.parse(data) : [];
+    }
+
+    // Sort todos: completed on top sorted by ascending date, then not completed by ascending date
+    function sortTodos(todos) {
+      return todos.slice().sort((a, b) => {
+        if (a.completed !== b.completed) {
+          return a.completed ? -1 : 1; // completed tasks first
+        }
+        const dateA = new Date(a.date);
+        const dateB = new Date(b.date);
+        return dateA - dateB;
+      });
+    }
+
+    // Render the todo list
+    function renderTodos() {
+      let todos = loadTodos();
+      todos = sortTodos(todos);
+
+      todoList.innerHTML = '';
+      if(todos.length === 0) {
+        const emptyMsg = document.createElement('p');
+        emptyMsg.textContent = "Chưa có việc cần làm. Hãy thêm việc!";
+        emptyMsg.style.textAlign = "center";
+        emptyMsg.style.color = "#95a5a6";
+        todoList.appendChild(emptyMsg);
+        return;
+      }
+      todos.forEach((todo, index) => {
+        const li = document.createElement('li');
+        li.setAttribute('data-index', index);
+        if (todo.completed) li.classList.add('done');
+
+        // Checkbox
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.className = 'check-box';
+        checkbox.setAttribute('aria-label', 'Hoàn thành công việc');
+        checkbox.checked = todo.completed;
+        checkbox.addEventListener('change', () => {
+          updateTodoCompleted(todo, checkbox.checked);
+          renderTodos();
+        });
+
+        // Task content label with editable on double click
+        const label = document.createElement('label');
+        label.className = 'content-label';
+        label.textContent = todo.content;
+        label.setAttribute('tabindex', 0);
+        label.setAttribute('aria-label', 'Nội dung công việc, nhấn đúp hoặc Enter để chỉnh sửa');
+
+        let originalContent = todo.content;
+
+        // Make label editable on double click or enter key pressed
+        function enableEditing() {
+          label.contentEditable = true;
+          label.focus();
+          label.classList.add('editing');
+          // Move cursor to end
+          document.execCommand('selectAll', false, null);
+          document.getSelection().collapseToEnd();
+        }
+        label.addEventListener('dblclick', enableEditing);
+        label.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            if (!label.isContentEditable) {
+              enableEditing();
+            } else {
+              label.blur();
+            }
+          } else if (e.key === 'Escape') {
+            if(label.isContentEditable) {
+              label.textContent = originalContent;
+              label.blur();
+            }
+          }
+        });
+
+        // Save changes when editing ends
+        label.addEventListener('blur', () => {
+          if (!label.isContentEditable) return;
+          label.contentEditable = false;
+          label.classList.remove('editing');
+          const newContent = label.textContent.trim();
+          if(newContent.length === 0) {
+            label.textContent = originalContent;
+          } else if(newContent !== originalContent) {
+            updateTodoContent(todo, newContent);
+            originalContent = newContent;
+          }
+          renderTodos();
+        });
+
+        // Due date text
+        const dueDateSpan = document.createElement('span');
+        dueDateSpan.className = 'due-date';
+        dueDateSpan.textContent = todo.date ? formatDate(todo.date) : '';
+
+        // Edit date button
+        const editDateBtn = document.createElement('button');
+        editDateBtn.type = 'button';
+        editDateBtn.className = 'edit-btn';
+        editDateBtn.title = 'Chỉnh sửa ngày';
+        editDateBtn.setAttribute('aria-label', 'Chỉnh sửa ngày cần làm việc');
+        editDateBtn.innerHTML = '📅';
+        editDateBtn.addEventListener('click', () => {
+          const newDate = prompt('Sửa ngày (ngày-tháng-năm):', todo.date ? formatDateForPrompt(todo.date) : '');
+          if (newDate) {
+            const parsedDate = parseDateDMY(newDate);
+            if (parsedDate) {
+              updateTodoDate(todo, parsedDate.toISOString().slice(0, 10));
+              renderTodos();
+            } else {
+              alert('Ngày không hợp lệ, vui lòng nhập định dạng ngày-tháng-năm (dd-mm-yyyy)');
+            }
+          }
+        });
+
+        // Delete button
+        const deleteBtn = document.createElement('button');
+        deleteBtn.type = 'button';
+        deleteBtn.className = 'delete-btn';
+        deleteBtn.title = 'Xóa công việc';
+        deleteBtn.setAttribute('aria-label', 'Xóa công việc');
+        deleteBtn.textContent = '✕';
+        deleteBtn.addEventListener('click', () => {
+          if(confirm('Bạn có chắc muốn xóa việc này?')) {
+            deleteTodo(todo);
+            renderTodos();
+          }
+        });
+
+        li.appendChild(checkbox);
+        li.appendChild(label);
+        li.appendChild(dueDateSpan);
+        li.appendChild(editDateBtn);
+        li.appendChild(deleteBtn);
+
+        todoList.appendChild(li);
+      });
+    }
+
+    // Find todo index helper
+    function findTodoIndex(todo, todosArray) {
+      return todosArray.findIndex(t => t.content === todo.content && t.date === todo.date && t.completed === todo.completed);
+    }
+
+    function updateTodoCompleted(todo, newCompleted) {
+      const todos = loadTodos();
+      const idx = findTodoIndex(todo, todos);
+      if (idx >= 0) {
+        todos[idx].completed = newCompleted;
+        saveTodos(todos);
+      }
+    }
+
+    function updateTodoContent(todo, newContent) {
+      const todos = loadTodos();
+      const idx = findTodoIndex(todo, todos);
+      if (idx >= 0) {
+        todos[idx].content = newContent;
+        saveTodos(todos);
+      }
+    }
+
+    function updateTodoDate(todo, newDate) {
+      const todos = loadTodos();
+      const idx = findTodoIndex(todo, todos);
+      if (idx >= 0) {
+        todos[idx].date = newDate;
+        saveTodos(todos);
+      }
+    }
+
+    function deleteTodo(todo) {
+      const todos = loadTodos();
+      const idx = findTodoIndex(todo, todos);
+      if (idx >= 0) {
+        todos.splice(idx, 1);
+        saveTodos(todos);
+      }
+    }
+
+    // Format date yyyy-mm-dd -> dd-mm-yyyy for prompt default value
+    function formatDateForPrompt(dateStr) {
+      const d = new Date(dateStr);
+      if(isNaN(d)) return '';
+      const day = ('0' + d.getDate()).slice(-2);
+      const month = ('0' + (d.getMonth() + 1)).slice(-2);
+      const year = d.getFullYear();
+      return `${day}-${month}-${year}`;
+    }
+
+    // Parse date from d-m-y string to Date object
+    function parseDateDMY(str) {
+      const parts = str.split(/[-\/]/);
+      if(parts.length !== 3) return null;
+      const day = parseInt(parts[0],10);
+      const month = parseInt(parts[1],10) - 1; // zero-based month
+      const year = parseInt(parts[2],10);
+      const date = new Date(year, month, day);
+      if(date && date.getFullYear() === year && date.getMonth() === month && date.getDate() === day) {
+        return date;
+      }
+      return null;
+    }
+
+    // Function to get today's date string yyyy-mm-dd
+    function getTodayString() {
+      const today = new Date();
+      const yyyy = today.getFullYear();
+      const mm = ('0' + (today.getMonth() + 1)).slice(-2);
+      const dd = ('0' + today.getDate()).slice(-2);
+      return `${yyyy}-${mm}-${dd}`;
+    }
+
+    // Add new todo
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      const content = todoInput.value.trim();
+      const date = todoDate.value;
+
+      if(content.length === 0) return;
+      if(!date) {
+        alert("Vui lòng chọn ngày cần làm việc.");
+        return;
+      }
+
+      const todos = loadTodos();
+      todos.push({content, date, completed: false});
+      saveTodos(todos);
+
+      todoInput.value = '';
+      todoDate.value = getTodayString(); // Reset to today date instead of empty
+      todoInput.focus();
+      renderTodos();
+    });
+
+    // Initialize date input's min attribute and default value to today
+    function initDateMin() {
+      const todayStr = getTodayString();
+      todoDate.min = todayStr;
+      todoDate.value = todayStr;
+    }
+
+    // Initial render
+    initDateMin();
+    renderTodos();
+
+  })();
+</script>
+</body>
+</html>
+
