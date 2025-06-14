@@ -8,159 +8,529 @@
   /* Reset and base styles */
   * {
     box-sizing: border-box;
+    transition: background-color 0.3s, color 0.3s;
   }
+  
+  :root {
+    --primary: #3498db;
+    --primary-dark: #2980b9;
+    --danger: #e74c3c;
+    --danger-dark: #c0392b;
+    --success: #2ecc71;
+    --success-dark: #27ae60;
+    --warning: #f39c12;
+    --warning-dark: #d35400;
+    --gray-light: #ecf0f1;
+    --gray: #bdc3c7;
+    --gray-dark: #7f8c8d;
+    --dark: #2c3e50;
+    --darker: #1a252f;
+    --text-light: #ecf0f1;
+    --text-dark: #2c3e50;
+    --bg-light: #ffffff;
+    --bg-card-light: #ffffff;
+    --bg-dark: #1a252f;
+    --bg-card-dark: #2c3e50;
+    --shadow: 0 4px 10px rgba(0,0,0,0.1);
+    --border-radius: 10px;
+  }
+  
   body {
     margin: 0;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: #f5f7fa;
-    color: #333;
+    background: var(--bg-light);
+    color: var(--text-dark);
     display: flex;
     justify-content: center;
     padding: 20px;
     min-height: 100vh;
   }
+  
+  body.dark-mode {
+    background: var(--bg-dark);
+    color: var(--text-light);
+  }
+  
   .container {
-    background: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    max-width: 480px;
+    background: var(--bg-card-light);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    max-width: 800px;
     width: 100%;
-    padding: 20px 24px 32px;
+    padding: 25px 30px;
     display: flex;
     flex-direction: column;
+    position: relative;
   }
+  
+  .dark-mode .container {
+    background: var(--bg-card-dark);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  }
+  
+  /* Header styles */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 15px;
+  }
+  
   h1 {
-    margin: 0 0 20px;
+    margin: 0;
     font-weight: 700;
-    font-size: 1.8rem;
-    color: #2c3e50;
+    font-size: 2rem;
+    color: var(--primary);
     text-align: center;
+    flex: 1;
+    min-width: 200px;
   }
+  
+  .dark-mode h1 {
+    color: var(--text-light);
+  }
+  
+  /* Form styles */
   form {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
     margin-bottom: 24px;
+    background: rgba(52, 152, 219, 0.05);
+    padding: 15px;
+    border-radius: var(--border-radius);
   }
+  
+  .dark-mode form {
+    background: rgba(44, 62, 80, 0.5);
+  }
+  
   input[type="text"], input[type="date"] {
     flex: 1 1 auto;
-    padding: 10px 14px;
-    border: 2px solid #d1d8e0;
+    padding: 12px 16px;
+    border: 2px solid var(--gray);
     border-radius: 6px;
     font-size: 1rem;
-    transition: border-color 0.3s;
+    background: var(--bg-light);
+    color: var(--text-dark);
   }
+  
+  .dark-mode input[type="text"],
+  .dark-mode input[type="date"] {
+    background: var(--darker);
+    color: var(--text-light);
+    border-color: var(--gray-dark);
+  }
+  
   input[type="text"]:focus, input[type="date"]:focus {
     outline: none;
-    border-color: #3498db;
+    border-color: var(--primary);
   }
+  
   button.add-btn {
-    background-color: #3498db;
+    background-color: var(--primary);
     color: white;
     border: none;
     border-radius: 6px;
-    padding: 11px 18px;
+    padding: 12px 20px;
     font-size: 1rem;
     cursor: pointer;
-    transition: background-color 0.3s;
+    font-weight: 600;
+    min-width: 100px;
   }
+  
   button.add-btn:hover {
-    background-color: #2980b9;
+    background-color: var(--primary-dark);
   }
+  
+  /* Controls section */
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+    justify-content: space-between;
+  }
+  
+  .search-container {
+    flex: 1;
+    min-width: 250px;
+    position: relative;
+  }
+  
+  .search-container input {
+    width: 100%;
+    padding: 10px 15px 10px 40px;
+    border: 2px solid var(--gray);
+    border-radius: 6px;
+    background: var(--bg-light);
+    color: var(--text-dark);
+  }
+  
+  .dark-mode .search-container input {
+    background: var(--darker);
+    color: var(--text-light);
+    border-color: var(--gray-dark);
+  }
+  
+  .search-icon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--gray-dark);
+  }
+  
+  .filters {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  
+  .filter-btn {
+    padding: 8px 15px;
+    background: var(--gray-light);
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+  }
+  
+  .dark-mode .filter-btn {
+    background: var(--darker);
+    color: var(--text-light);
+  }
+  
+  .filter-btn.active {
+    background: var(--primary);
+    color: white;
+  }
+  
+  /* Stats section */
+  .stats {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 15px;
+    background: rgba(236, 240, 241, 0.5);
+    padding: 15px;
+    border-radius: var(--border-radius);
+  }
+  
+  .dark-mode .stats {
+    background: rgba(44, 62, 80, 0.5);
+  }
+  
+  .stat-item {
+    text-align: center;
+    flex: 1;
+    min-width: 120px;
+  }
+  
+  .stat-value {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--primary);
+  }
+  
+  .dark-mode .stat-value {
+    color: var(--text-light);
+  }
+  
+  .stat-label {
+    font-size: 0.9rem;
+    color: var(--gray-dark);
+  }
+  
+  /* Todo list styles */
   ul.todo-list {
     list-style: none;
     margin: 0;
     padding: 0;
   }
+  
   ul.todo-list li {
     background: #ffd6e8; /* pink for not done */
     border-radius: 6px;
-    padding: 14px 16px;
+    padding: 16px 20px;
     margin-bottom: 14px;
     display: flex;
     align-items: center;
     gap: 12px;
     flex-wrap: wrap;
+    transition: transform 0.2s;
   }
+  
+  .dark-mode ul.todo-list li {
+    background: #3a1e2d;
+  }
+  
+  ul.todo-list li:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+  }
+  
   ul.todo-list li:last-child {
     margin-bottom: 0;
   }
+  
   ul.todo-list li.done {
     background: #d6efdf;
-    color: #2ecc71;
-    text-decoration: line-through;
+    color: var(--success);
   }
+  
+  .dark-mode ul.todo-list li.done {
+    background: #1d3a29;
+    color: var(--success);
+  }
+  
   ul.todo-list li .check-box {
     flex-shrink: 0;
   }
+  
   ul.todo-list li label.content-label {
     flex: 1 1 60%;
     font-size: 1.1rem;
     cursor: pointer;
   }
+  
+  .dark-mode ul.todo-list li label.content-label {
+    color: var(--text-light);
+  }
+  
+  ul.todo-list li.done label.content-label {
+    text-decoration: line-through;
+    color: var(--success-dark);
+  }
+  
   ul.todo-list li label.content-label[contenteditable="true"] {
     border-bottom: 1px dashed transparent;
   }
+  
   ul.todo-list li label.content-label[contenteditable="true"]:focus {
     outline: none;
-    border-color: #3498db;
+    border-color: var(--primary);
     background: #fff;
   }
+  
+  .dark-mode ul.todo-list li label.content-label[contenteditable="true"]:focus {
+    background: var(--darker);
+  }
+  
   ul.todo-list li span.due-date {
     flex-shrink: 0;
     font-size: 0.9rem;
-    color: #7f8c8d;
+    color: var(--gray-dark);
     min-width: 110px;
     font-weight: 600;
   }
-  ul.todo-list li.done span.due-date {
-    color: #27ae60;
+  
+  .dark-mode ul.todo-list li span.due-date {
+    color: var(--gray);
   }
+  
+  ul.todo-list li.done span.due-date {
+    color: var(--success);
+  }
+  
+  ul.todo-list li .actions {
+    display: flex;
+    gap: 5px;
+  }
+  
   ul.todo-list li button.edit-btn,
   ul.todo-list li button.delete-btn {
     background: none;
     border: none;
-    color: #7f8c8d;
+    color: var(--gray-dark);
     cursor: pointer;
     padding: 6px 8px;
     border-radius: 6px;
     transition: background-color 0.2s, color 0.2s;
+    font-size: 1.1rem;
   }
+  
   ul.todo-list li button.edit-btn:hover {
-    background-color: #3498db;
+    background-color: var(--primary);
     color: white;
   }
+  
   ul.todo-list li button.delete-btn:hover {
-    background-color: #e74c3c;
+    background-color: var(--danger);
     color: white;
   }
-  ul.todo-list li button.editing {
-    background-color: #f39c12;
-    color: white;
+  
+  /* Theme toggle */
+  .theme-toggle {
+    position: absolute;
+    top: 25px;
+    right: 30px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.5rem;
+    color: var(--dark);
   }
-
-  /* Mobile responsiveness */
-  @media (max-width: 400px) {
+  
+  .dark-mode .theme-toggle {
+    color: var(--text-light);
+  }
+  
+  /* Empty state */
+  .empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--gray-dark);
+  }
+  
+  .empty-state i {
+    font-size: 4rem;
+    margin-bottom: 20px;
+    color: var(--gray);
+  }
+  
+  /* Priority indicator */
+  .priority {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-right: 5px;
+  }
+  
+  .priority.high {
+    background: var(--danger);
+  }
+  
+  .priority.medium {
+    background: var(--warning);
+  }
+  
+  .priority.low {
+    background: var(--success);
+  }
+  
+  /* Responsive styles */
+  @media (max-width: 768px) {
+    .header {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    
+    .controls {
+      flex-direction: column;
+    }
+    
+    .filters {
+      justify-content: center;
+    }
+    
+    .stats {
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    .stat-item {
+      min-width: 100%;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .container {
+      padding: 15px;
+    }
+    
     ul.todo-list li {
       flex-direction: column;
       align-items: flex-start;
+      gap: 8px;
     }
+    
+    ul.todo-list li .check-box {
+      margin-bottom: 10px;
+    }
+    
     ul.todo-list li span.due-date,
-    ul.todo-list li button.edit-btn,
-    ul.todo-list li button.delete-btn {
+    ul.todo-list li .actions {
       margin-top: 8px;
+      width: 100%;
+      display: flex;
+      justify-content: flex-end;
+    }
+    
+    .theme-toggle {
+      position: relative;
+      top: auto;
+      right: auto;
+      margin-left: auto;
+      margin-bottom: 15px;
     }
   }
 </style>
 </head>
 <body>
   <main class="container" role="main" aria-label="TO-DO LIST">
-    <h1>TO-DO LIST</h1>
+    <button class="theme-toggle" id="theme-toggle" aria-label="Chuyển đổi chế độ sáng/tối">🌙</button>
+    
+    <div class="header">
+      <h1>TO-DO LIST</h1>
+      <div class="priority-filter">
+        <span>Ưu tiên:</span>
+        <select id="priority-filter" aria-label="Lọc theo mức độ ưu tiên">
+          <option value="all">Tất cả</option>
+          <option value="high">Cao</option>
+          <option value="medium">Trung bình</option>
+          <option value="low">Thấp</option>
+        </select>
+      </div>
+    </div>
+    
     <form id="todo-form" aria-label="Thêm công việc mới">
       <input type="text" id="todo-input" placeholder="Nhập công việc cần làm..." aria-label="Công việc cần làm" required maxlength="100" />
       <input type="date" id="todo-date" aria-label="Ngày cần làm việc" required />
+      <select id="todo-priority" aria-label="Mức độ ưu tiên">
+        <option value="high">Cao</option>
+        <option value="medium" selected>Trung bình</option>
+        <option value="low">Thấp</option>
+      </select>
       <button type="submit" class="add-btn" aria-label="Thêm công việc">Thêm</button>
     </form>
+    
+    <div class="controls">
+      <div class="search-container">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="search-input" placeholder="Tìm kiếm công việc..." aria-label="Tìm kiếm công việc" />
+      </div>
+      
+      <div class="filters">
+        <button class="filter-btn active" data-filter="all">Tất cả</button>
+        <button class="filter-btn" data-filter="active">Chưa hoàn thành</button>
+        <button class="filter-btn" data-filter="completed">Đã hoàn thành</button>
+      </div>
+    </div>
+    
+    <div class="stats">
+      <div class="stat-item">
+        <div class="stat-value" id="total-tasks">0</div>
+        <div class="stat-label">Tổng công việc</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value" id="completed-tasks">0</div>
+        <div class="stat-label">Đã hoàn thành</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value" id="active-tasks">0</div>
+        <div class="stat-label">Chưa hoàn thành</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value" id="high-priority">0</div>
+        <div class="stat-label">Ưu tiên cao</div>
+      </div>
+    </div>
+    
     <ul id="todo-list" class="todo-list" aria-live="polite" aria-relevant="additions removals"></ul>
   </main>
 
@@ -169,8 +539,22 @@
     const form = document.getElementById('todo-form');
     const todoInput = document.getElementById('todo-input');
     const todoDate = document.getElementById('todo-date');
+    const todoPriority = document.getElementById('todo-priority');
     const todoList = document.getElementById('todo-list');
-
+    const themeToggle = document.getElementById('theme-toggle');
+    const searchInput = document.getElementById('search-input');
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    const priorityFilter = document.getElementById('priority-filter');
+    const totalTasksEl = document.getElementById('total-tasks');
+    const completedTasksEl = document.getElementById('completed-tasks');
+    const activeTasksEl = document.getElementById('active-tasks');
+    const highPriorityEl = document.getElementById('high-priority');
+    
+    // State
+    let currentFilter = 'all';
+    let currentPriorityFilter = 'all';
+    let searchTerm = '';
+    
     // Format date as dd/mm/yyyy for display
     function formatDate(dateStr) {
       const d = new Date(dateStr);
@@ -180,49 +564,115 @@
       const year = d.getFullYear();
       return `${day}/${month}/${year}`;
     }
-
+    
+    // Get priority display text
+    function getPriorityText(priority) {
+      switch(priority) {
+        case 'high': return 'Cao';
+        case 'medium': return 'Trung bình';
+        case 'low': return 'Thấp';
+        default: return '';
+      }
+    }
+    
     // Save todos to localStorage
     function saveTodos(todos) {
       localStorage.setItem('todoList', JSON.stringify(todos));
     }
-
+    
     // Load todos from localStorage
     function loadTodos() {
       const data = localStorage.getItem('todoList');
       return data ? JSON.parse(data) : [];
     }
-
+    
     // Sort todos: completed on top sorted by ascending date, then not completed by ascending date
     function sortTodos(todos) {
       return todos.slice().sort((a, b) => {
         if (a.completed !== b.completed) {
           return a.completed ? -1 : 1; // completed tasks first
         }
+        
+        // Priority sorting: high > medium > low
+        const priorityOrder = { high: 1, medium: 2, low: 3 };
+        if (priorityOrder[a.priority] !== priorityOrder[b.priority]) {
+          return priorityOrder[a.priority] - priorityOrder[b.priority];
+        }
+        
         const dateA = new Date(a.date);
         const dateB = new Date(b.date);
         return dateA - dateB;
       });
     }
-
+    
+    // Filter todos based on current filter settings
+    function filterTodos(todos) {
+      return todos.filter(todo => {
+        // Filter by status
+        const statusMatch = 
+          currentFilter === 'all' || 
+          (currentFilter === 'active' && !todo.completed) || 
+          (currentFilter === 'completed' && todo.completed);
+        
+        // Filter by priority
+        const priorityMatch = 
+          currentPriorityFilter === 'all' || 
+          todo.priority === currentPriorityFilter;
+        
+        // Filter by search term
+        const searchMatch = 
+          searchTerm === '' || 
+          todo.content.toLowerCase().includes(searchTerm.toLowerCase());
+        
+        return statusMatch && priorityMatch && searchMatch;
+      });
+    }
+    
+    // Update stats
+    function updateStats(todos) {
+      const total = todos.length;
+      const completed = todos.filter(t => t.completed).length;
+      const active = total - completed;
+      const highPriority = todos.filter(t => t.priority === 'high').length;
+      
+      totalTasksEl.textContent = total;
+      completedTasksEl.textContent = completed;
+      activeTasksEl.textContent = active;
+      highPriorityEl.textContent = highPriority;
+    }
+    
     // Render the todo list
     function renderTodos() {
       let todos = loadTodos();
       todos = sortTodos(todos);
-
+      const filteredTodos = filterTodos(todos);
+      
+      updateStats(todos);
+      
       todoList.innerHTML = '';
-      if(todos.length === 0) {
-        const emptyMsg = document.createElement('p');
-        emptyMsg.textContent = "Chưa có việc cần làm. Hãy thêm việc!";
-        emptyMsg.style.textAlign = "center";
-        emptyMsg.style.color = "#95a5a6";
+      
+      if(filteredTodos.length === 0) {
+        const emptyMsg = document.createElement('div');
+        emptyMsg.className = 'empty-state';
+        emptyMsg.innerHTML = `
+          <i>📋</i>
+          <h3>Không tìm thấy công việc nào</h3>
+          <p>Hãy thêm công việc mới hoặc thay đổi bộ lọc</p>
+        `;
         todoList.appendChild(emptyMsg);
         return;
       }
-      todos.forEach((todo, index) => {
+      
+      filteredTodos.forEach((todo, index) => {
         const li = document.createElement('li');
         li.setAttribute('data-index', index);
         if (todo.completed) li.classList.add('done');
-
+        
+        // Priority indicator
+        const priorityIndicator = document.createElement('div');
+        priorityIndicator.className = `priority ${todo.priority}`;
+        priorityIndicator.title = `Mức độ ưu tiên: ${getPriorityText(todo.priority)}`;
+        
         // Checkbox
         const checkbox = document.createElement('input');
         checkbox.type = 'checkbox';
@@ -233,16 +683,16 @@
           updateTodoCompleted(todo, checkbox.checked);
           renderTodos();
         });
-
+        
         // Task content label with editable on double click
         const label = document.createElement('label');
         label.className = 'content-label';
         label.textContent = todo.content;
         label.setAttribute('tabindex', 0);
-        label.setAttribute('aria-label', 'Nội dung công việc, nhấn đúp hoặc Enter để chỉnh sửa');
-
+        label.setAttribute('aria-label', `Nội dung công việc: ${todo.content}, nhấn đúp hoặc Enter để chỉnh sửa`);
+        
         let originalContent = todo.content;
-
+        
         // Make label editable on double click or enter key pressed
         function enableEditing() {
           label.contentEditable = true;
@@ -252,6 +702,7 @@
           document.execCommand('selectAll', false, null);
           document.getSelection().collapseToEnd();
         }
+        
         label.addEventListener('dblclick', enableEditing);
         label.addEventListener('keydown', (e) => {
           if (e.key === 'Enter') {
@@ -268,7 +719,7 @@
             }
           }
         });
-
+        
         // Save changes when editing ends
         label.addEventListener('blur', () => {
           if (!label.isContentEditable) return;
@@ -283,12 +734,13 @@
           }
           renderTodos();
         });
-
+        
         // Due date text
         const dueDateSpan = document.createElement('span');
         dueDateSpan.className = 'due-date';
         dueDateSpan.textContent = todo.date ? formatDate(todo.date) : '';
-
+        dueDateSpan.title = `Ngày hết hạn: ${formatDate(todo.date)}`;
+        
         // Edit date button
         const editDateBtn = document.createElement('button');
         editDateBtn.type = 'button';
@@ -308,7 +760,7 @@
             }
           }
         });
-
+        
         // Delete button
         const deleteBtn = document.createElement('button');
         deleteBtn.type = 'button';
@@ -322,22 +774,33 @@
             renderTodos();
           }
         });
-
+        
+        // Actions container
+        const actions = document.createElement('div');
+        actions.className = 'actions';
+        actions.appendChild(editDateBtn);
+        actions.appendChild(deleteBtn);
+        
+        li.appendChild(priorityIndicator);
         li.appendChild(checkbox);
         li.appendChild(label);
         li.appendChild(dueDateSpan);
-        li.appendChild(editDateBtn);
-        li.appendChild(deleteBtn);
-
+        li.appendChild(actions);
+        
         todoList.appendChild(li);
       });
     }
-
+    
     // Find todo index helper
     function findTodoIndex(todo, todosArray) {
-      return todosArray.findIndex(t => t.content === todo.content && t.date === todo.date && t.completed === todo.completed);
+      return todosArray.findIndex(t => 
+        t.content === todo.content && 
+        t.date === todo.date && 
+        t.completed === todo.completed &&
+        t.priority === todo.priority
+      );
     }
-
+    
     function updateTodoCompleted(todo, newCompleted) {
       const todos = loadTodos();
       const idx = findTodoIndex(todo, todos);
@@ -346,7 +809,7 @@
         saveTodos(todos);
       }
     }
-
+    
     function updateTodoContent(todo, newContent) {
       const todos = loadTodos();
       const idx = findTodoIndex(todo, todos);
@@ -355,7 +818,7 @@
         saveTodos(todos);
       }
     }
-
+    
     function updateTodoDate(todo, newDate) {
       const todos = loadTodos();
       const idx = findTodoIndex(todo, todos);
@@ -364,7 +827,7 @@
         saveTodos(todos);
       }
     }
-
+    
     function deleteTodo(todo) {
       const todos = loadTodos();
       const idx = findTodoIndex(todo, todos);
@@ -373,7 +836,7 @@
         saveTodos(todos);
       }
     }
-
+    
     // Format date yyyy-mm-dd -> dd-mm-yyyy for prompt default value
     function formatDateForPrompt(dateStr) {
       const d = new Date(dateStr);
@@ -383,7 +846,7 @@
       const year = d.getFullYear();
       return `${day}-${month}-${year}`;
     }
-
+    
     // Parse date from d-m-y string to Date object
     function parseDateDMY(str) {
       const parts = str.split(/[-\/]/);
@@ -397,7 +860,7 @@
       }
       return null;
     }
-
+    
     // Function to get today's date string yyyy-mm-dd
     function getTodayString() {
       const today = new Date();
@@ -406,42 +869,96 @@
       const dd = ('0' + today.getDate()).slice(-2);
       return `${yyyy}-${mm}-${dd}`;
     }
-
+    
     // Add new todo
     form.addEventListener('submit', e => {
       e.preventDefault();
       const content = todoInput.value.trim();
       const date = todoDate.value;
-
+      const priority = todoPriority.value;
+      
       if(content.length === 0) return;
       if(!date) {
         alert("Vui lòng chọn ngày cần làm việc.");
         return;
       }
-
+      
       const todos = loadTodos();
-      todos.push({content, date, completed: false});
+      todos.push({content, date, priority, completed: false});
       saveTodos(todos);
-
+      
       todoInput.value = '';
-      todoDate.value = getTodayString(); // Reset to today date instead of empty
+      todoDate.value = getTodayString();
+      todoPriority.value = 'medium';
       todoInput.focus();
       renderTodos();
     });
-
+    
     // Initialize date input's min attribute and default value to today
     function initDateMin() {
       const todayStr = getTodayString();
       todoDate.min = todayStr;
       todoDate.value = todayStr;
     }
-
+    
+    // Theme toggle
+    themeToggle.addEventListener('click', () => {
+      document.body.classList.toggle('dark-mode');
+      const isDarkMode = document.body.classList.contains('dark-mode');
+      themeToggle.textContent = isDarkMode ? '☀️' : '🌙';
+      localStorage.setItem('darkMode', isDarkMode);
+    });
+    
+    // Search functionality
+    searchInput.addEventListener('input', () => {
+      searchTerm = searchInput.value;
+      renderTodos();
+    });
+    
+    // Filter buttons
+    filterButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        filterButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentFilter = btn.dataset.filter;
+        renderTodos();
+      });
+    });
+    
+    // Priority filter
+    priorityFilter.addEventListener('change', () => {
+      currentPriorityFilter = priorityFilter.value;
+      renderTodos();
+    });
+    
+    // Load dark mode preference
+    function loadThemePreference() {
+      const isDarkMode = localStorage.getItem('darkMode') === 'true';
+      if (isDarkMode) {
+        document.body.classList.add('dark-mode');
+        themeToggle.textContent = '☀️';
+      }
+    }
+    
     // Initial render
     initDateMin();
+    loadThemePreference();
     renderTodos();
-
+    
+    // Add sample data if empty
+    if (loadTodos().length === 0) {
+      const sampleTodos = [
+        { content: "Hoàn thành báo cáo", date: getTodayString(), priority: "high", completed: false },
+        { content: "Mua sắm đồ dùng", date: getTodayString(), priority: "medium", completed: false },
+        { content: "Gọi điện cho khách hàng", date: getTodayString(), priority: "high", completed: true },
+        { content: "Đọc sách mới", date: getTodayString(), priority: "low", completed: false }
+      ];
+      
+      saveTodos(sampleTodos);
+      renderTodos();
+    }
+    
   })();
 </script>
 </body>
 </html>
-
